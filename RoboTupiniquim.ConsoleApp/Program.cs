@@ -6,28 +6,83 @@
         {
             while (true)
             {
-                int areaX, areaY;
-                areaX = 5;
-                areaY = 5;
+                Console.Write("Digite dois numeros, representando a área de pesquisa (Ex: 5 6) ");
+                string areastring = Console.ReadLine()!;
+                char[] areachar = new char[10];
+                int tamanhoX = 0, tamanhoY = 0;
+                string stringnumerox, stringnumeroy;
+                bool ehnumero = true;
+                int numerobase = 0;
+                for (int z = 0; z < areastring.Length; z++)
+                {
+
+                    char atual = areastring[z];
+                    if (atual != ' ')
+                    {
+                        areachar[numerobase] = atual;
+                        numerobase++;
+                    }
+                }
+                stringnumerox = areachar[0].ToString();
+                stringnumeroy = areachar[1].ToString();
+                ehnumero = int.TryParse(stringnumerox, out tamanhoX);
+                ehnumero = int.TryParse(stringnumeroy, out tamanhoY);
+
+                if (ehnumero == false)
+                {
+                    Console.WriteLine("Comando Inválido, retornando ao início");
+                    continue;
+                }
+                
+               
                 char[] direcoes = new char[] {'N', 'L', 'S', 'O' };
-        
-                int posicaoRoboX = 3;
-                int posicaoRoboY = 3;
-                char direcaoInicial = 'L';
 
-                string teste = "MMDMMDMDDM";
+                Console.WriteLine("Digite dois numeros e uma letra, representando a posicao X, Y e Direção incial, respectivamente");
+                Console.WriteLine("Ex: (1 2 L)");
+                string posicoes = Console.ReadLine()!.ToUpper();
+                char[] posicoeschar = new char[10];
+                int posicaoX = 0, posicaoY = 0;
+                string stringPosicaoX, stringPosicaoY;
+                char direcaoInicial;
+                bool saoNumeros = true;
+                int numerobase2 = 0;
+                for (int n = 0; n < posicoes.Length; n++)
+                {
+                    char atual = posicoes[n];
+                    if(atual != ' ')
+                    {
+                        posicoeschar[numerobase2] = atual;
+                        numerobase2++;
+                    }
+                }
+                stringPosicaoX = posicoeschar[0].ToString();
+                stringPosicaoY = posicoeschar[1].ToString();
+                saoNumeros = int.TryParse(stringPosicaoX, out posicaoX);
+                saoNumeros = int.TryParse(stringPosicaoY, out posicaoY);
+                if (saoNumeros == false)
+                {
+                    Console.WriteLine("Comando(s) Inválido(s), retornando ao início");
+                    continue;
+                }
+                direcaoInicial = posicoeschar[2];
 
-                char[] andar = new char[teste.Length];
+                Console.WriteLine("Digite Comando para mexer o robô, as letras aceitas são: ");
+                Console.WriteLine("E (Virar 90° a esquerda");
+                Console.WriteLine("D (Virar 90° a direita");
+                Console.WriteLine("M (andar para frente na direção colocada)");
+                string movimentacaoRobo = Console.ReadLine()!;
+
+                char[] andar = new char[movimentacaoRobo.Length];
                 char letraAtual;
                 for (int caracter = 0; caracter < andar.Length; caracter++)
                 {
-                    letraAtual = teste[caracter];
+                    letraAtual = movimentacaoRobo[caracter];
                     andar[caracter] = letraAtual;
                 }
                 char direcaoAtual = direcaoInicial;
                 bool direcaocorreta = false;
                 int posicaoArray = 0;
-                for (int i = 0; i < teste.Length; i++)
+                for (int i = 0; i < movimentacaoRobo.Length; i++)
                 {
                     for (int j = 0; j < direcoes.Length; j++)
                     {
@@ -53,13 +108,13 @@
                         } else if (andar[i] == 'M')
                         {
                             if (direcaoAtual == 'N')
-                            posicaoRoboY += 1;
+                            posicaoY += 1;
                             else if (direcaoAtual == 'S')
-                            posicaoRoboY -= 1;
+                            posicaoY -= 1;
                             else if (direcaoAtual == 'L')
-                            posicaoRoboX += 1;
+                            posicaoX += 1;
                             else
-                            posicaoRoboX -= 1;
+                            posicaoX -= 1;
                                   
                         }else
                         Console.WriteLine("Comando Inválido, Digite apenas as letras E, D e M");
