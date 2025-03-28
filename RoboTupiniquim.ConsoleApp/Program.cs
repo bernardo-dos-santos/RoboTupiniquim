@@ -1,41 +1,52 @@
-﻿namespace RoboTupiniquim.ConsoleApp
+﻿using static System.Net.Mime.MediaTypeNames;
+
+namespace RoboTupiniquim.ConsoleApp
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            while (true)
+            bool continuar = true;
+            do
             {
+                Console.Clear();
+                int contador = 0;
                 char[] direcoes = new char[] { 'N', 'L', 'S', 'O' };
+                int[] armazenamentoPosicaoFinal = new int[4];
+                char[] armazenamentoDireçãoFinal = new char[2];
+                int[] variaveisFinais = new int[4];
+                char[] direcoesFinais = new char[2];
+                int tamanhoX, tamanhoY , posicaoX = 0, posicaoY = 0;
+
                 string areastring = SolicitarArea();
-                int tamanhoX, tamanhoY;
                 char[] areachar = StringParaCharArray(areastring);
-                ConverterTextoInt(out tamanhoX, out tamanhoX, areachar);
+                VerificarArrayValido(areachar, 2);
+                if (!ConverterTextoInt(out tamanhoX, out tamanhoY, areachar))
+                    continue;
+                while (contador < 2)
+                {
+                    string posicoes = SolicitarPosicaoInicial();
+                    char[] posicoeschar = StringParaCharArray(posicoes);
+                    VerificarArrayValido(posicoeschar, 3);
+                    if (!ConverterTextoInt(out posicaoX, out posicaoY, posicoeschar))
+                        continue;
+                    char direcaoAtual = CharArrayParaChar(posicoeschar);
 
-                //if (ehnumero == false)
-                //{
-                //Console.WriteLine("Comando Inválido, retornando ao início");
-                //continue;
-                //}
+                    string movimentacaoRobo = SolicitarDirecoes();
+                    char[] andar = StringParaCharArray(movimentacaoRobo);
+                    MovimentacaoRobo(movimentacaoRobo, direcoes, direcaoAtual, andar, out posicaoY, out posicaoX, posicaoX, posicaoY);
+                    if (FimDoMapa(tamanhoX, tamanhoY, posicaoX, posicaoY))
+                        continue;                   
+                    variaveisFinais = ArmazenarXY(posicaoX, posicaoY, contador,variaveisFinais );                    
+                    direcoesFinais = ArmazenarDirecao(contador, direcaoAtual, direcoesFinais);
+                    if (contador == 1)
+                        MostrarPosicoes(direcoesFinais, variaveisFinais);
+                    contador += 1;
+                }
+                    continuar = DesejaContinuar();
 
 
-
-                string posicoes = SolicitarPosicaoInicial();
-                int posicaoX = 0, posicaoY = 0;
-                char[] posicoeschar = StringParaCharArray(posicoes);
-                ConverterTextoInt(out posicaoX, out posicaoY, posicoeschar);
-                char direcaoAtual = CharArrayParaUmChar(posicoeschar);
-
-
-                string movimentacaoRobo = SolicitarDirecoes();
-                char[] andar = StringParaCharArray(movimentacaoRobo);
-                MovimentacaoRobo(movimentacaoRobo, direcoes, direcaoAtual, andar, posicaoY, posicaoX);
-
-
-
-                Console.ReadLine();
-
-            }
+            } while (continuar);
         }
 
             public static int ArrayCircular(int j, int tamanhoArray)
@@ -43,7 +54,6 @@
                 int teste = ((j % tamanhoArray) + tamanhoArray) % tamanhoArray;
                 return teste;
             }
-
             static string SolicitarArea()
             {
                 Console.Write("Digite dois numeros, representando a área de pesquisa (Ex: 5 6) ");
@@ -64,18 +74,24 @@
                 Console.WriteLine("E (Virar 90° a esquerda");
                 Console.WriteLine("D (Virar 90° a direita");
                 Console.WriteLine("M (andar para frente na direção colocada)");
-                string movimentacaoRobo = Console.ReadLine()!;
+                string movimentacaoRobo = Console.ReadLine()!.ToUpper();
                 return movimentacaoRobo;
             }
-            static void ConverterTextoInt(out int tamanhoX,out int tamanhoY, char[] areachar )
+            static bool ConverterTextoInt(out int tamanhoX,out int tamanhoY, char[] areachar )
             {
-                string stringnumerox, stringnumeroy;
+                string stringnumerox, stringnumeroy; 
                 stringnumerox = areachar[0].ToString();
                 stringnumeroy = areachar[1].ToString();
-                int.TryParse(stringnumerox, out tamanhoX);
-                int.TryParse(stringnumeroy, out tamanhoY);
+                bool ehnumero = int.TryParse(stringnumerox, out tamanhoX);
+                ehnumero = int.TryParse(stringnumeroy, out tamanhoY);
+
+                 if(ehnumero == false)
+                    Console.WriteLine("Comando Inválido, Retornando");
+                    Console.ReadLine();
+                return ehnumero;
+
             }
-            static char[] StringParaCharArray(string areastring)
+        static char[] StringParaCharArray(string areastring)
             {
                 char[] areachar = new char[areastring.Length];
                 int numerobase = 0;
@@ -97,12 +113,15 @@
                 direcaoInicial = posicoeschar[2];
                 return direcaoInicial;
             }
-            static void MovimentacaoRobo(string movimentacaoRobo, char[] direcoes, char direcaoAtual, char[] andar, int posicaoY, int posicaoX)
+            static void MovimentacaoRobo(string movimentacaoRobo, char[] direcoes, char direcaoAtual, char[] andar, out int posicaoY, out int posicaoX, int numeroX, int numeroY)
             {
                 bool direcaocorreta = false;
                 int posicaoArray = 0;
+                posicaoY = numeroY;
+                posicaoX = numeroX;
                 for (int i = 0; i < movimentacaoRobo.Length; i++)
                 {
+                    
                     for (int j = 0; j < direcoes.Length; j++)
                     {
                         if (direcoes[j] == direcaoAtual)
@@ -110,10 +129,14 @@
                             direcaoAtual = direcoes[j];
                             posicaoArray = j;
                             direcaocorreta = true;
+                            continue;
                         }
                     }
                     if (direcaocorreta == false)
+                    {                    
                         Console.WriteLine("Direção Inicial incorreta, Retornando...");
+                        break;
+                    }   
 
                     if (andar[i] == 'E')
                     {
@@ -139,10 +162,79 @@
 
                     }
                     else
-                        Console.WriteLine("Comando Inválido, Digite apenas as letras E, D e M");
+                    {
+    
+                    }
 
                 }
             }
+            static int[] ArmazenarXY( int posicaoX, int posicaoY, int contador, int[] variacaofinal)
+            {
+            
+                if (contador == 0)
+                {
+                    variacaofinal[0] = posicaoX;
+                    variacaofinal[1] = posicaoY;
+                }
+                else
+                {
+                    variacaofinal[2] = posicaoX;
+                    variacaofinal[3] = posicaoY;
+                }
+            return variacaofinal;
+            }
+            static char[] ArmazenarDirecao(int contador, char direcaoAtual, char[] armazenamento)
+            {
+                if (contador == 0)
+                {
+                    armazenamento[0] = direcaoAtual;
+                }
+                else
+                {
+                    armazenamento[1] = direcaoAtual;
+                }
+            return armazenamento;
         }
+            static void MostrarPosicoes(char[] posicoesFinais, int[] xyfinais)
+            {
+            Console.WriteLine($"A posição do primeiro robô é {xyfinais[0]} {xyfinais[1]} {posicoesFinais[0]}");
+            Console.WriteLine($"A posição do segundo robô é {xyfinais[2]} {xyfinais[3]} {posicoesFinais[1]}");
+        }
+            static bool DesejaContinuar()
+            {
+                Console.WriteLine("Você Deseja Continuar? (s/n)");
+                string continuar = Console.ReadLine()!.ToUpper();
+                if (continuar != "S")
+                    return false;
+                return true;
+            }
+            static bool FimDoMapa(int tamanhoX, int tamanhoY, int posicaoX, int posicaoY)
+            {
+            if (posicaoX > tamanhoX || posicaoY > tamanhoY)
+            {
+                Console.WriteLine("O Robô chegou ao fim do mapa, não é possível continuar, retornando...");
+                return true;
+            }
+            else
+                return false;
+            }
+            
+            static bool VerificarArrayValido(char[] array , int numeroarray)
+            {
+                if(array.Length < numeroarray)
+                {
+                    Console.WriteLine("Comando Inválido, Retornando...");
+                    Console.ReadLine();
+                    return false;
+                }
+                return true;
+            }
+
+            
+        
+
+
+        
+
     }
 }
