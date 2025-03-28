@@ -20,32 +20,46 @@ namespace RoboTupiniquim.ConsoleApp
 
                 string areastring = SolicitarArea();
                 char[] areachar = StringParaCharArray(areastring);
-                VerificarArrayValido(areachar, 2);
-                if (!ConverterTextoInt(out tamanhoX, out tamanhoY, areachar))
+                if (!VerificarArrayValido(areachar, 2))
                     continue;
-                while (contador < 2)
-                {
-                    string posicoes = SolicitarPosicaoInicial();
-                    char[] posicoeschar = StringParaCharArray(posicoes);
-                    VerificarArrayValido(posicoeschar, 3);
-                    if (!ConverterTextoInt(out posicaoX, out posicaoY, posicoeschar))
+                else if (!ConverterTextoInt(out tamanhoX, out tamanhoY, areachar))
+                    continue;
+                    while (contador < 2)
+                    {
+                        if(contador == 0)
+                        { 
+                            Console.WriteLine("--------------------------------------------");
+                            Console.WriteLine("Primeiro Robô");
+                            Console.WriteLine("--------------------------------------------");
+                        } else
+                        {
+                            Console.WriteLine("--------------------------------------------");
+                            Console.WriteLine("Segundo Robô");
+                            Console.WriteLine("--------------------------------------------");
+                        }
+                        string posicoes = SolicitarPosicaoInicial();
+                        char[] posicoeschar = StringParaCharArray(posicoes);
+                        if (!VerificarArrayValido(posicoeschar, 3))
+                            continue;
+                        else if (!ConverterTextoInt(out posicaoX, out posicaoY, posicoeschar))
+                            continue;
+                        char direcaoAtual = CharArrayParaChar(posicoeschar);
+                        
+                        string movimentacaoRobo = SolicitarDirecoes();
+                        char[] andar = StringParaCharArray(movimentacaoRobo);
+                        if (!VerificarDirecoes(andar))
                         continue;
-                    char direcaoAtual = CharArrayParaChar(posicoeschar);
-
-                    string movimentacaoRobo = SolicitarDirecoes();
-                    char[] andar = StringParaCharArray(movimentacaoRobo);
-                    MovimentacaoRobo(movimentacaoRobo, direcoes, direcaoAtual, andar, out posicaoY, out posicaoX, posicaoX, posicaoY);
-                    if (FimDoMapa(tamanhoX, tamanhoY, posicaoX, posicaoY))
+                        if (!MovimentacaoRobo(movimentacaoRobo, direcoes, direcaoAtual, andar, out posicaoY, out posicaoX, posicaoX, posicaoY))
+                        continue;
+                        if (FimDoMapa(tamanhoX, tamanhoY, posicaoX, posicaoY))
                         continue;                   
-                    variaveisFinais = ArmazenarXY(posicaoX, posicaoY, contador,variaveisFinais );                    
-                    direcoesFinais = ArmazenarDirecao(contador, direcaoAtual, direcoesFinais);
-                    if (contador == 1)
-                        MostrarPosicoes(direcoesFinais, variaveisFinais);
-                    contador += 1;
-                }
-                    continuar = DesejaContinuar();
-
-
+                        variaveisFinais = ArmazenarXY(posicaoX, posicaoY, contador,variaveisFinais );                    
+                        direcoesFinais = ArmazenarDirecao(contador, direcaoAtual, direcoesFinais);
+                        if (contador == 1)
+                            MostrarPosicoes(direcoesFinais, variaveisFinais);
+                        contador += 1;
+                    }
+                continuar = DesejaContinuar();
             } while (continuar);
         }
 
@@ -84,20 +98,19 @@ namespace RoboTupiniquim.ConsoleApp
                 stringnumeroy = areachar[1].ToString();
                 bool ehnumero = int.TryParse(stringnumerox, out tamanhoX);
                 ehnumero = int.TryParse(stringnumeroy, out tamanhoY);
-
                  if(ehnumero == false)
-                    Console.WriteLine("Comando Inválido, Retornando");
-                    Console.ReadLine();
+                 {     
+                    Console.WriteLine("Comando Inválido, Retornando...");
+                    Console.ReadLine();                   
+                 }
                 return ehnumero;
-
-            }
+        }
         static char[] StringParaCharArray(string areastring)
             {
                 char[] areachar = new char[areastring.Length];
                 int numerobase = 0;
                 for (int z = 0; z < areastring.Length; z++)
                 {
-
                     char atual = areastring[z];
                     if (atual != ' ')
                     {
@@ -113,15 +126,14 @@ namespace RoboTupiniquim.ConsoleApp
                 direcaoInicial = posicoeschar[2];
                 return direcaoInicial;
             }
-            static void MovimentacaoRobo(string movimentacaoRobo, char[] direcoes, char direcaoAtual, char[] andar, out int posicaoY, out int posicaoX, int numeroX, int numeroY)
+            static bool MovimentacaoRobo(string movimentacaoRobo, char[] direcoes, char direcaoAtual, char[] andar, out int posicaoY, out int posicaoX, int numeroX, int numeroY)
             {
                 bool direcaocorreta = false;
                 int posicaoArray = 0;
                 posicaoY = numeroY;
                 posicaoX = numeroX;
                 for (int i = 0; i < movimentacaoRobo.Length; i++)
-                {
-                    
+                {                    
                     for (int j = 0; j < direcoes.Length; j++)
                     {
                         if (direcoes[j] == direcaoAtual)
@@ -135,9 +147,8 @@ namespace RoboTupiniquim.ConsoleApp
                     if (direcaocorreta == false)
                     {                    
                         Console.WriteLine("Direção Inicial incorreta, Retornando...");
-                        break;
+                        return false;
                     }   
-
                     if (andar[i] == 'E')
                     {
                         posicaoArray = ArrayCircular(posicaoArray - 1, direcoes.Length);
@@ -147,7 +158,6 @@ namespace RoboTupiniquim.ConsoleApp
                     {
                         posicaoArray = ArrayCircular(posicaoArray + 1, direcoes.Length);
                         direcaoAtual = direcoes[posicaoArray];
-
                     }
                     else if (andar[i] == 'M')
                     {
@@ -159,15 +169,16 @@ namespace RoboTupiniquim.ConsoleApp
                             posicaoX += 1;
                         else
                             posicaoX -= 1;
-
                     }
                     else
                     {
-    
+                    Console.WriteLine("Direção solicitada incorreta, Retornando...");
+                    return false;                    
                     }
-
+                
                 }
-            }
+            return true;
+        }
             static int[] ArmazenarXY( int posicaoX, int posicaoY, int contador, int[] variacaofinal)
             {
             
@@ -217,8 +228,7 @@ namespace RoboTupiniquim.ConsoleApp
             }
             else
                 return false;
-            }
-            
+            }           
             static bool VerificarArrayValido(char[] array , int numeroarray)
             {
                 if(array.Length < numeroarray)
@@ -228,6 +238,20 @@ namespace RoboTupiniquim.ConsoleApp
                     return false;
                 }
                 return true;
+            }
+            static bool VerificarDirecoes(char[] c)
+            {
+                for (int i = 0; i < c.Length; i++)
+                {
+                    if (c[i] != 'E' && c[i] != 'D' && c[i] != 'M')
+                    {
+                        Console.WriteLine("Direções Inválidas, Digite Novamente");
+                        Console.ReadLine();
+                        return false;
+                    }
+                                    
+                }
+            return true;
             }
 
             
