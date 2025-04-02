@@ -2,10 +2,15 @@
 {
     public class ResultadosEContinuar
     {
-        public static void MostrarPosicoes(char[] posicoesFinais, int[] xyfinais)
+        public static void MostrarPosicoes(string[] resultados)
         {
-            Console.WriteLine($"A posição do primeiro robô é {xyfinais[0]} {xyfinais[1]} {posicoesFinais[0]}");
-            Console.WriteLine($"A posição do segundo robô é {xyfinais[2]} {xyfinais[3]} {posicoesFinais[1]}");
+            Console.WriteLine();
+            Console.WriteLine("--------------------------------------------");
+            foreach (var item in resultados)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine("--------------------------------------------");
         }
         public static bool DesejaContinuar()
         {

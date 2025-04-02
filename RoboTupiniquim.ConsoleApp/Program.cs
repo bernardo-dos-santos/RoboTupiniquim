@@ -5,7 +5,8 @@ using static RoboTupiniquim.ConsoleApp.ResultadosEContinuar;
 using static RoboTupiniquim.ConsoleApp.SolicitacaoDeDados;
 using static RoboTupiniquim.ConsoleApp.ConversaoDeDados;
 using static RoboTupiniquim.ConsoleApp.VerificacaoDeDados;
-using static RoboTupiniquim.ConsoleApp.RoboTupiniquim;
+using static RoboTupiniquim.ConsoleApp.Robo;
+using System.Xml;
 namespace RoboTupiniquim.ConsoleApp
 {
     internal class Program
@@ -16,13 +17,9 @@ namespace RoboTupiniquim.ConsoleApp
             do
             {
                 Console.Clear();
-                int contador = 0;
                 char[] direcoes = new char[] { 'N', 'L', 'S', 'O' };
-                int[] armazenamentoPosicaoFinal = new int[4];
-                char[] armazenamentoDireçãoFinal = new char[2];
-                int[] variaveisFinais = new int[4];
-                char[] direcoesFinais = new char[2];
-                int tamanhoX, tamanhoY , posicaoX = 0, posicaoY = 0;
+                int quantosRobos;
+                int tamanhoX, tamanhoY;
 
                 string areastring = SolicitarArea();
                 char[] areachar = StringParaCharArray(areastring);
@@ -30,33 +27,70 @@ namespace RoboTupiniquim.ConsoleApp
                     continue;
                 else if (!ConverterTextoInt(out tamanhoX, out tamanhoY, areachar))
                     continue;
-                    while (contador < 2)
+                string quantosRobo = SolicitarQuantosRobos();
+                if(!int.TryParse(quantosRobo, out  quantosRobos))
+                {
+                    Console.WriteLine("Número inválido, Retornando...");
+                    Console.ReadLine();
+                    continue;
+                }
+                Robo[] robos = new Robo[quantosRobos];
+                    
+                for (int contador = 0; contador < robos.Length; contador++)
+                {
+                    Robo robo = new Robo();
+                    robos[contador] = robo;
+                    QualRobo(contador + 1);
+                    string posicoes = SolicitarPosicaoInicial();
+                    char[] posicoeschar = StringParaCharArray(posicoes);
+                    if (!VerificarArrayValido(posicoeschar, 3))
                     {
-                        QualRobo(contador);
-                        string posicoes = SolicitarPosicaoInicial();
-                        char[] posicoeschar = StringParaCharArray(posicoes);
-                        if (!VerificarArrayValido(posicoeschar, 3))
-                            continue;
-                        else if (!ConverterTextoInt(out posicaoX, out posicaoY, posicoeschar))
-                            continue;
-                        char direcaoAtual = CharArrayParaChar(posicoeschar);
-                        
-                        string movimentacaoRobo = SolicitarDirecoes();
-                        char[] andar = StringParaCharArray(movimentacaoRobo);
-                        if (!VerificarDirecoes(andar))
+                        contador -= 1;
                         continue;
-                        if (!MovimentacaoRobo(movimentacaoRobo, direcoes, direcaoAtual, andar, out posicaoY, out posicaoX, posicaoX, posicaoY))
-                        continue;
-                        if (FimDoMapa(tamanhoX, tamanhoY, posicaoX, posicaoY))
-                        continue;                   
-                        variaveisFinais = ArmazenarXY(posicaoX, posicaoY, contador,variaveisFinais );                    
-                        direcoesFinais = ArmazenarDirecao(contador, direcaoAtual, direcoesFinais);
-                        if (contador == 1)
-                            MostrarPosicoes(direcoesFinais, variaveisFinais);
-                        contador += 1;
                     }
+
+                    else if (!ConverterTextoInt(out robo.posicaoX, out robo.posicaoY, posicoeschar))
+                    {
+                        contador -= 1;
+                        continue;
+                    }
+                    robo.direcaoAtual = CharArrayParaChar(posicoeschar);
+                        
+                    string movimentacaoRobo = SolicitarDirecoes();
+                    char[] andar = StringParaCharArray(movimentacaoRobo);
+                    if (!VerificarDirecoes(andar))
+                    {
+                        contador -= 1;
+                        continue;
+                    }
+                    if (!robo.MovimentacaoRobo(movimentacaoRobo, direcoes, robo.direcaoAtual, andar, out robo.posicaoY, out robo.posicaoX, robo.posicaoX, robo.posicaoY))
+                    {
+                        Console.WriteLine("Comando Inválido, Retornando...");
+                        {
+                            contador -= 1;
+                            continue;
+                        }
+                    }
+
+                    if (FimDoMapa(tamanhoX, tamanhoY, robo.posicaoX, robo.posicaoY))
+                    {
+                        contador -= 1;
+                        continue;
+                    }
+
+                }
+                string[] resultado = ArmazenamentoPosicoes(robos);
+                MostrarPosicoes(resultado);
                 continuar = DesejaContinuar();
             } while (continuar);
+        }
+
+        public static void QualRobo(int i)
+        {
+            Console.WriteLine();
+            Console.WriteLine("--------------------------------------------");
+            Console.WriteLine($"{i}° Robô");
+            Console.WriteLine("--------------------------------------------");
         }
     }
 

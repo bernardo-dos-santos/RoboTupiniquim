@@ -1,13 +1,16 @@
 ﻿namespace RoboTupiniquim.ConsoleApp
 {
-    public class RoboTupiniquim
+    public class Robo
     {
-        public static int ArrayCircular(int j, int tamanhoArray)
+        public int posicaoX, posicaoY;
+        public char direcaoAtual;
+
+        public int ArrayCircular(int j, int tamanhoArray)
         {
             int teste = ((j % tamanhoArray) + tamanhoArray) % tamanhoArray;
             return teste;
         }
-        public static bool MovimentacaoRobo(string movimentacaoRobo, char[] direcoes, char direcaoAtual, char[] andar, out int posicaoY, out int posicaoX, int numeroX, int numeroY)
+        public bool MovimentacaoRobo(string movimentacaoRobo, char[] direcoes, char direcaoAtual, char[] andar, out int posicaoY, out int posicaoX, int numeroX, int numeroY)
         {
             bool direcaocorreta = false;
             int posicaoArray = 0;
@@ -27,7 +30,6 @@
                 }
                 if (direcaocorreta == false)
                 {
-                    Console.WriteLine("Direção Inicial incorreta, Retornando...");
                     return false;
                 }
                 if (andar[i] == 'E')
@@ -53,30 +55,13 @@
                 }
                 else
                 {
-                    Console.WriteLine("Direção solicitada incorreta, Retornando...");
                     return false;
                 }
 
             }
             return true;
         }
-        public static void QualRobo(int contador)
-        {
-            Console.WriteLine();
-            if (contador == 0)
-            {
-                Console.WriteLine("--------------------------------------------");
-                Console.WriteLine("Primeiro Robô");
-                Console.WriteLine("--------------------------------------------");
-            }
-            else
-            {
-                Console.WriteLine("--------------------------------------------");
-                Console.WriteLine("Segundo Robô");
-                Console.WriteLine("--------------------------------------------");
-            }
 
-        }
 
     }
 

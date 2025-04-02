@@ -2,32 +2,14 @@
 {
     public class Armazenamento
     {
-        public static int[] ArmazenarXY(int posicaoX, int posicaoY, int contador, int[] variacaofinal)
+        public static string[] ArmazenamentoPosicoes(Robo[] robos)
         {
-
-            if (contador == 0)
+            string[] resultados = new string[robos.Length];
+            for(int contador = 0; contador < robos.Length; contador++)
             {
-                variacaofinal[0] = posicaoX;
-                variacaofinal[1] = posicaoY;
+                resultados[contador] = (contador + 1) + "° robô: " + robos[contador].posicaoX.ToString()+ " " + robos[contador].posicaoY.ToString() + " " + robos[contador].direcaoAtual.ToString();
             }
-            else
-            {
-                variacaofinal[2] = posicaoX;
-                variacaofinal[3] = posicaoY;
-            }
-            return variacaofinal;
-        }
-        public static char[] ArmazenarDirecao(int contador, char direcaoAtual, char[] armazenamento)
-        {
-            if (contador == 0)
-            {
-                armazenamento[0] = direcaoAtual;
-            }
-            else
-            {
-                armazenamento[1] = direcaoAtual;
-            }
-            return armazenamento;
+            return resultados;              
         }
     }
 

@@ -19,11 +19,17 @@
         public static string SolicitarDirecoes()
         {
             Console.WriteLine("Digite Comando para mexer o robô, as letras aceitas são: ");
-            Console.WriteLine("E (Virar 90° a esquerda");
-            Console.WriteLine("D (Virar 90° a direita");
+            Console.WriteLine("E (Virar 90° a esquerda)");
+            Console.WriteLine("D (Virar 90° a direita)");
             Console.WriteLine("M (andar para frente na direção colocada)");
             string movimentacaoRobo = Console.ReadLine()!.ToUpper();
             return movimentacaoRobo;
+        }
+        public static string SolicitarQuantosRobos()
+        {
+            Console.Write("Digite quantos robôs você deseja ");
+            string totalRobos = Console.ReadLine()!;
+            return totalRobos;
         }
     }
 
